@@ -43,7 +43,7 @@ async function fetchPage(
   ow(data, responseSchema);
   return data.hits
     .map((item) => ({ ...item, objectID: parseInt(item.objectID) }))
-    .sort((a, b) => a.objectID - b.objectID);
+    .sort((a, b) => b.objectID - a.objectID);
 }
 
 function cleanupText(t: string): string {
@@ -81,31 +81,49 @@ function cleanupText(t: string): string {
 Actor.main(async () => {
   const input = await Actor.getInput();
   ow(input, inputSchema);
-  const KV = await Actor.openKeyValueStore("hn-search-alert");
+  const PersistentKV = await Actor.openKeyValueStore("hn-search-alert");
   const lastSeenItemKVKey = `LAST_SEEN_ITEM_${input.keyword.replaceAll(
     /[^a-zA-Z0-9]/g,
     ""
   )}`;
-  const lastSeenItemString = await KV.getValue<string>(lastSeenItemKVKey);
+  const lastSeenItemString = await PersistentKV.getValue<string>(
+    lastSeenItemKVKey
+  );
   const lastSeenItem = lastSeenItemString ? parseInt(lastSeenItemString) : null;
 
-  let items: ProcessedItem[] = [];
-  let page = 0;
-  let previousLastSeenIndex = -2;
-  while (previousLastSeenIndex === -2) {
-    items.push(...(await fetchPage(input.keyword, page)));
-    previousLastSeenIndex =
-      lastSeenItem === null
-        ? -1
-        : items.findIndex((item) => item.objectID > lastSeenItem) - 1;
-    page += 1;
+  let unseenItems;
+  if (lastSeenItem === null) {
+    unseenItems = await fetchPage(input.keyword, 0);
+  } else {
+    unseenItems = [];
+    let page = 0;
+    while (true) {
+      const pageItems = await fetchPage(input.keyword, page);
+      const firstSeenIndex = pageItems.findIndex(
+        (item) => item.objectID <= lastSeenItem
+      );
+      if (firstSeenIndex !== -1) {
+        unseenItems.push(...pageItems.slice(0, firstSeenIndex));
+        break;
+      }
+      unseenItems.push(...pageItems);
+      page += 1;
+    }
   }
-  const newItems = items.slice(previousLastSeenIndex + 1);
-  await Actor.pushData(newItems);
+  if (unseenItems === undefined) {
+    new Log().error("unseenItems was somehow `undefined` - this is a bug.");
+    return;
+  }
+  if (unseenItems.length === 0) {
+    new Log().info("No new items found");
+    return;
+  }
+  unseenItems.reverse();
+  await Actor.pushData(unseenItems);
 
   const text =
     `**New mentions of '${input.keyword}' on Hacker news**\n\n\n` +
-    newItems
+    unseenItems
       .map((item) => {
         let text;
         if (item.comment_text !== null) {
@@ -126,14 +144,19 @@ Actor.main(async () => {
         return text;
       })
       .join("\n\n\n");
-  const setLastSeenItemPromise = KV.setValue(
-    lastSeenItemKVKey,
-    items.at(-1)?.objectID.toString(),
-    { contentType: "text/plain" }
-  );
+  const setOutputPromises = [
+    PersistentKV.setValue(
+      lastSeenItemKVKey,
+      unseenItems.at(-1)?.objectID.toString(),
+      {
+        contentType: "text/plain",
+      }
+    ),
+    Actor.setValue("OUTPUT", text, { contentType: "text/plain" }),
+  ];
   if (input.email) {
     await Promise.all([
-      setLastSeenItemPromise,
+      ...setOutputPromises,
       Actor.call("apify/send-mail", {
         to: input.email,
         subject: `New mentions of '${input.keyword}' on HN`,
@@ -142,9 +165,6 @@ Actor.main(async () => {
     ]);
   } else {
     console.info(text);
-    await Promise.all([
-      setLastSeenItemPromise,
-      Actor.setValue("OUTPUT", text, { contentType: "text/plain" }),
-    ]);
+    await Promise.all(setOutputPromises);
   }
 });
