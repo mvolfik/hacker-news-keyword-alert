@@ -42,7 +42,11 @@ async function fetchPage(
   }).json();
   ow(data, responseSchema);
   return data.hits
-    .map((item) => ({ ...item, objectID: parseInt(item.objectID) }))
+    .map((item) => {
+      const newItem = { ...item, objectID: parseInt(item.objectID) };
+      delete (newItem as any)["_highlightResult"];
+      return newItem;
+    })
     .sort((a, b) => b.objectID - a.objectID);
 }
 
