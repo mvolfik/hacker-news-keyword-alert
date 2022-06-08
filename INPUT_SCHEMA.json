@@ -1,0 +1,20 @@
+{
+  "title": "Input for the hn-keyword-alert actor.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "keyword": {
+      "title": "Keyword",
+      "type": "string",
+      "description": "The keyword to monitor on Hacker News",
+      "editor": "textfield"
+    },
+    "email": {
+      "title": "Notification Email",
+      "type": "string",
+      "description": "The actor can notify you by sending an email. If you aren't a paying Apify user, you can only use the email address specified in your profile! If you leave this empty, no notifications will be sent and you can setup your own notification method (see Actor description for more details).",
+      "editor": "textfield"
+    }
+  },
+  "required": ["keyword"]
+}
