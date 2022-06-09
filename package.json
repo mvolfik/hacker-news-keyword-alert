@@ -1,6 +1,6 @@
 {
   "name": "hacker-news-keyword-alert",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Apify actor that notifies you whenever the given keyword is mentioned on Hacker News",
   "main": "dist/index.js",
   "private": true,
