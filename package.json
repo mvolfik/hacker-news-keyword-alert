@@ -1,5 +1,5 @@
 {
-  "name": "hn-keyword-alert",
+  "name": "hacker-news-keyword-alert",
   "version": "0.0.1",
   "description": "Apify actor that notifies you whenever the given keyword is mentioned on Hacker News",
   "main": "dist/index.js",
@@ -9,7 +9,7 @@
     "build": "tsc",
     "start": "node dist/index.js"
   },
-  "repository": "github:mvolfik/hn-keyword-alert.git",
+  "repository": "github:mvolfik/hacker-news-keyword-alert.git",
   "keywords": [
     "apify",
     "hacker-news"
@@ -17,9 +17,9 @@
   "author": "Matěj Volf <matej.volf@apify.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mvolfik/hn-keyword-alert/issues"
+    "url": "https://github.com/mvolfik/hacker-news-keyword-alert/issues"
   },
-  "homepage": "https://github.com/mvolfik/hn-keyword-alert#readme",
+  "homepage": "https://github.com/mvolfik/hacker-news-keyword-alert#readme",
   "dependencies": {
     "apify": "next",
     "got-scraping": "^3.2.9",

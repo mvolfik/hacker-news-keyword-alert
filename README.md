@@ -1,6 +1,6 @@
-# HN keyword alert
+# Hacker News keyword alert
 
-HN keyword alert is an actor for the Apify platform that allows you to get notified whenever a given keyword is mentioned in a Hacker News post or comment.
+Hacker News keyword alert is an actor for the Apify platform that allows you to get notified whenever a given keyword is mentioned in a Hacker News post or comment.
 
 This is especially useful for brands – this actor enables you to catch and reply to negative mentions of your company before they get viral, and you have no chance of responding without your reply drowning in the storm.
 
@@ -37,7 +37,7 @@ This sets the integration for your actor globally, for all runs. This means if y
 To setup:
 
 1. Open the _Actors_ page in Apify Console.
-2. Find this actor (`mvolfik/hn-keyword-alert` – [Direct link][actor-in-console]).
+2. Find this actor (`mvolfik/hacker-news-keyword-alert` – [Direct link][actor-in-console]).
 3. Switch to the _Integrations_ tab.
 4. Click _Add new webhook_.
 5. Setup your webhook. The most useful variable to you is `resource`: for _Run succeeded_ events, this contains data about the actor output dataset and key-value stores. See below for details about this Actor's output.
@@ -46,7 +46,7 @@ To setup:
 #### Create a new task & add the integration there
 
 1. Open the _Actors_ page in Apify Console.
-2. Find this actor (`mvolfik/hn-keyword-alert` – [Direct link][actor-in-console]).
+2. Find this actor (`mvolfik/hacker-news-keyword-alert` – [Direct link][actor-in-console]).
 3. In the top right, click _Create empty task_.
 4. Configure the task input the same way as you configured the actor in the schedule and click _Save_.
 5. Go to the _Settings_ and rename the task so you can easily identify it - you'll probably want to mention the keyword in the name (don't forget to click _Save_ again).
@@ -98,17 +98,18 @@ Example:
 **New mentions of 'keyword' on Hacker news**
 
 
-A comment by jane_doe on post Some post name (https://example.com/):
+Comment by jane_doe on post 'Some post name' (https://example.com/):
   This is an example
+
   It's a very simple subset of HTML, as is typical to HN. This is what a link looks like https://example.com/
 HN link: https://news.ycombinator.com/item?id=1234567
 
-'Some post name' posted by johndoe (https://example.com/)
+Post 'Some post name' posted by johndoe (https://example.com/)
 HN link: https://news.ycombinator.com/item?id=123456
 ```
 
 This value is missing when there's no new items found.
 
-#### `hn-search-alert` named Key-value store
+#### `hacker-news-search-alert` named Key-value store
 
 The actor uses this named, persistent key-value store to save identifier of the last seen item for each query. If you remove a value from this store (or start the scraper for the first time on a given keyword, so no value is saved there yet), the actor will return the last 20 items.

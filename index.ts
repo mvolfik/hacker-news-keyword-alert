@@ -85,7 +85,9 @@ function cleanupText(t: string): string {
 Actor.main(async () => {
   const input = await Actor.getInput();
   ow(input, inputSchema);
-  const PersistentKV = await Actor.openKeyValueStore("hn-search-alert");
+  const PersistentKV = await Actor.openKeyValueStore(
+    "hacker-news-search-alert"
+  );
   const lastSeenItemKVKey = `LAST_SEEN_ITEM_${input.keyword.replaceAll(
     /[^a-zA-Z0-9]/g,
     ""
@@ -125,18 +127,19 @@ Actor.main(async () => {
   unseenItems.reverse();
   await Actor.pushData(unseenItems);
 
+  const textSubject = `New mentions of '${input.keyword}' on Hacker News`;
   const text =
-    `**New mentions of '${input.keyword}' on Hacker news**\n\n\n` +
+    `**${textSubject}**\n\n\n` +
     unseenItems
       .map((item) => {
         let text;
         if (item.comment_text !== null) {
           const optionalLink = item.story_url ? ` (${item.story_url})` : "";
           text =
-            `A comment by ${item.author} on post ${item.story_title}${optionalLink}:\n` +
+            `Comment by ${item.author} on post '${item.story_title}'${optionalLink}:\n` +
             cleanupText(item.comment_text);
         } else {
-          text = `'${item.title}' posted by ${item.author} (${
+          text = `Post '${item.title}' by ${item.author} (${
             item.url ?? "no link"
           })`;
           if (item.story_text !== null) {
@@ -163,7 +166,7 @@ Actor.main(async () => {
       ...setOutputPromises,
       Actor.call("apify/send-mail", {
         to: input.email,
-        subject: `New mentions of '${input.keyword}' on HN`,
+        subject: textSubject,
         text,
       }),
     ]);

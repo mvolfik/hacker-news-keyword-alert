@@ -1,5 +1,5 @@
 {
-  "title": "Input for the hn-keyword-alert actor.",
+  "title": "Input for the hacker-news-keyword-alert actor.",
   "type": "object",
   "schemaVersion": 1,
   "properties": {

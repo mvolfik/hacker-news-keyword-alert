@@ -1,5 +1,5 @@
 {
-	"name": "hn-keyword-alert",
+	"name": "hacker-news-keyword-alert",
 	"version": "0.0",
 	"buildTag": "latest",
 	"env": null
