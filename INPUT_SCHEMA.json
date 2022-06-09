@@ -7,7 +7,8 @@
       "title": "Keyword",
       "type": "string",
       "description": "The keyword to monitor on Hacker News",
-      "editor": "textfield"
+      "editor": "textfield",
+      "example": "apify"
     },
     "email": {
       "title": "Notification Email",
