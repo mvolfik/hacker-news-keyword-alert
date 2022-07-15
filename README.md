@@ -24,38 +24,6 @@ For experienced Apify users: just set a schedule executing this actor regularly 
 
 [actor-in-console]: https://console.apify.com/actors/pvyhTWhRoFCRgWKGE
 
-### Custom integrations
-
-If email notifications are unsuitable for your use-case, you can use Apify integrations to run a webhook after each run.
-
-There are two options:
-
-#### Add directly to actor
-
-This sets the integration for your actor globally, for all runs. This means if you'll want to setup multiple different monitors, each of them will trigger this same webhook.
-
-To setup:
-
-1. Open the _Actors_ page in Apify Console.
-2. Find this actor (`mvolfik/hacker-news-keyword-alert` – [Direct link][actor-in-console]).
-3. Switch to the _Integrations_ tab.
-4. Click _Add new webhook_.
-5. Setup your webhook. The most useful variable to you is `resource`: for _Run succeeded_ events, this contains data about the actor output dataset and key-value stores. See below for details about this Actor's output.
-6. Don't forget to save the integration.
-
-#### Create a new task & add the integration there
-
-1. Open the _Actors_ page in Apify Console.
-2. Find this actor (`mvolfik/hacker-news-keyword-alert` – [Direct link][actor-in-console]).
-3. In the top right, click _Create empty task_.
-4. Configure the task input the same way as you configured the actor in the schedule and click _Save_.
-5. Go to the _Settings_ and rename the task so you can easily identify it - you'll probably want to mention the keyword in the name (don't forget to click _Save_ again).
-6. Open the _Integrations_ tab and follow steps 4-6 above as if you were adding the integration to the actor.
-7. Now go the the _Schedules_ page in Apify Console and open the schedule you created earlier, or create a new one.
-8. In the _Actors and Tasks_ tab, click _Add new_, and add a _Task_.
-9. Now select the task you created earlier. In the _Input JSON overrides_ field, leave the default value `{}` (this means an empty object, i.e. no overrides).
-10. Save the task.
-
 ### Actor output
 
 If you want to create your custom integration, you need to know about the output format it provides.
@@ -112,4 +80,36 @@ This value is missing when there's no new items found.
 
 #### `hacker-news-search-alert` named Key-value store
 
-The actor uses this named, persistent key-value store to save identifier of the last seen item for each query. If you remove a value from this store (or start the scraper for the first time on a given keyword, so no value is saved there yet), the actor will return the last 20 items.
+The actor uses this named, persistent key-value store to save identifier of the last seen item for each query. **If you remove a value from this store or start the scraper for the first time on a given keyword, the actor will return the last 20 items.**
+
+### Custom integrations
+
+If email notifications are unsuitable for your use-case, you can use Apify integrations to run a webhook after each run.
+
+There are two options:
+
+#### Add directly to actor
+
+This sets the integration for your actor globally, for all runs. This means if you'll want to setup multiple different monitors, each of them will trigger this same webhook.
+
+To setup:
+
+1. Open the _Actors_ page in Apify Console.
+2. Find this actor (`mvolfik/hacker-news-keyword-alert` – [Direct link][actor-in-console]).
+3. Switch to the _Integrations_ tab.
+4. Click _Add new webhook_.
+5. Setup your webhook. The most useful variable to you is `resource`: for _Run succeeded_ events, this contains data about the actor output dataset and key-value stores. See below for details about this Actor's output.
+6. Don't forget to save the integration.
+
+#### Create a new task & add the integration there
+
+1. Open the _Actors_ page in Apify Console.
+2. Find this actor (`mvolfik/hacker-news-keyword-alert` – [Direct link][actor-in-console]).
+3. In the top right, click _Create empty task_.
+4. Configure the task input the same way as you configured the actor in the schedule and click _Save_.
+5. Go to the _Settings_ and rename the task so you can easily identify it - you'll probably want to mention the keyword in the name (don't forget to click _Save_ again).
+6. Open the _Integrations_ tab and follow steps 4-6 above as if you were adding the integration to the actor.
+7. Now go the the _Schedules_ page in Apify Console and open the schedule you created earlier, or create a new one.
+8. In the _Actors and Tasks_ tab, click _Add new_, and add a _Task_.
+9. Now select the task you created earlier. In the _Input JSON overrides_ field, leave the default value `{}` (this means an empty object, i.e. no overrides).
+10. Save the task.
